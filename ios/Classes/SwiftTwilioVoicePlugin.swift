@@ -111,7 +111,7 @@ public class SwiftTwilioVoicePlugin: NSObject, FlutterPlugin,  FlutterStreamHand
                 self.sendPhoneCallEvents(description: "LOG|pushRegistry:attempting to register with twilio", isError: false)
                 TwilioVoiceSDK.register(accessToken: token, deviceToken: deviceToken) { (error) in
                     if let error = error {
-                        self.sendPhoneCallEvents(description: "LOG|An error occurred while registering: \(error.localizedDescription)", isError: true)
+                        self.sendPhoneCallEvents(description: "LOG|An error occurred while registering: \(error.localizedDescription)", isError: false)
                     }
                     else {
                         self.sendPhoneCallEvents(description: "LOG|Successfully registered for VoIP push notifications.", isError: false)
@@ -340,7 +340,7 @@ public class SwiftTwilioVoicePlugin: NSObject, FlutterPlugin,  FlutterStreamHand
         if let token = accessToken {
             TwilioVoiceSDK.register(accessToken: token, deviceToken: deviceToken) { (error) in
                 if let error = error {
-                    self.sendPhoneCallEvents(description: "LOG|An error occurred while registering: \(error.localizedDescription)", isError: true)
+                    self.sendPhoneCallEvents(description: "LOG|An error occurred while registering: \(error.localizedDescription)", isError: false)
                     self.sendPhoneCallEvents(description: "DEVICETOKEN|\(String(decoding: deviceToken, as: UTF8.self))", isError: false)
                 }
                 else {
@@ -397,7 +397,7 @@ public class SwiftTwilioVoicePlugin: NSObject, FlutterPlugin,  FlutterStreamHand
     func unregisterTokens(token: String, deviceToken: Data) {
         TwilioVoiceSDK.unregister(accessToken: token, deviceToken: deviceToken) { (error) in
             if let error = error {
-                self.sendPhoneCallEvents(description: "LOG|An error occurred while unregistering: \(error.localizedDescription)", isError: true)
+                self.sendPhoneCallEvents(description: "LOG|An error occurred while unregistering: \(error.localizedDescription)", isError: false)
             } else {
                 self.sendPhoneCallEvents(description: "LOG|Successfully unregistered from VoIP push notifications.", isError: false)
             }
@@ -584,7 +584,7 @@ public class SwiftTwilioVoicePlugin: NSObject, FlutterPlugin,  FlutterStreamHand
     public func callDidDisconnect(call: Call, error: Error?) {
         self.sendPhoneCallEvents(description: "Call Ended", isError: false)
         if let error = error {
-            self.sendPhoneCallEvents(description: "Call Failed: \(error.localizedDescription)", isError: true)
+            self.sendPhoneCallEvents(description: "Call Failed: \(error.localizedDescription)", isError: false)
         }
         
         if !self.userInitiatedDisconnect {
