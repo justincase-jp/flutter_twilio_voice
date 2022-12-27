@@ -526,9 +526,19 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
     }
 
     private void sendPhoneCallEvents(String description) {
+        sendPhoneCallEventsWithError(description, null);
+    }
+
+    private void sendPhoneCallEventsWithError(String description, CallException error) {
         if (eventSink == null) {
             return;
         }
+
+        if(error != null) {
+            eventSink.error(String.valueOf(error.getErrorCode()), error.getMessage(), null);
+            return;
+        }
+
         eventSink.success(description);
     }
 
@@ -597,7 +607,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                 Log.d(TAG, "Connect failure");
                 String message = String.format("Call Error: %d, %s", error.getErrorCode(), error.getMessage());
                 Log.e(TAG, message);
-                sendPhoneCallEvents("LOG|" + message);
+                sendPhoneCallEventsWithError("LOG|" + message, error);
 
             }
 
@@ -634,7 +644,7 @@ public class TwilioVoicePlugin implements FlutterPlugin, MethodChannel.MethodCal
                     Log.e(TAG, message);
                 }
                 activity.setVolumeControlStream(savedVolumeControlStream);
-                sendPhoneCallEvents("Call Ended");
+                sendPhoneCallEventsWithError("Call Ended", error);
                 disconnected();
             }
         };
